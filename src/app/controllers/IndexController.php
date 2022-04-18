@@ -48,12 +48,13 @@ class IndexController extends Controller
 
         if ($this->request->getPost('search')) {
             $productsearch = $this->request->getPost('name');
-
+            $product = array();
             foreach ($data as $k => $v) {
                 if (strtolower($v->product_name) == strtolower($productsearch)) {
-                    $this->view->product =  $v;
+                    array_push($product, $v);
                 }
             }
+            $this->view->product =  $product;
         }
     }
 
