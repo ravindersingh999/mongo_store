@@ -7,6 +7,10 @@ class IndexController extends Controller
 {
     public function indexAction()
     {
+    }
+
+    public function addproductAction()
+    {
         if ($this->request->getPost('addproduct')) {
             if (empty($this->request->getPost('product_name')) || empty($this->request->getPost('product_category')) || empty($this->request->getPost('product_price')) || empty($this->request->getPost('product_stock'))) {
                 $this->view->productaddmsg = "<span class='text-danger'>**All fields required</span>";
