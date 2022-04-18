@@ -2,7 +2,6 @@
 
 use Phalcon\Mvc\Controller;
 
-
 class IndexController extends Controller
 {
     public function indexAction()
@@ -32,7 +31,7 @@ class IndexController extends Controller
                     "variation2" => $variation2,
                     "variation3" => $variation3,
                 );
-                $this->mongo->insertOne([
+                $this->mongo->products->insertOne([
                     "product_name" => $this->request->getPost('product_name'),
                     "product_category" => $this->request->getPost('product_category'),
                     "product_price" => $this->request->getPost('product_price'),
@@ -47,7 +46,7 @@ class IndexController extends Controller
 
     public function productAction()
     {
-        $data = $this->mongo->find();
+        $data = $this->mongo->products->find();
         $this->view->list = $data;
 
         if ($this->request->getPost('search')) {
@@ -66,7 +65,7 @@ class IndexController extends Controller
     {
         if ($this->request->getPost('delete')) {
             $id = $this->request->getPost('delval');
-            $data = $this->mongo->deleteOne([
+            $data = $this->mongo->products->deleteOne([
                 "_id" => new MongoDB\BSON\ObjectID($id)
             ]);
 
@@ -76,7 +75,7 @@ class IndexController extends Controller
         if ($this->request->getPost('edit')) {
 
             $id = $this->request->getPost('delval');
-            $data = $this->mongo->find([
+            $data = $this->mongo->products->find([
                 '_id' => new MongoDB\BSON\ObjectID($id)
             ]);
             foreach ($data as $k => $v) {
@@ -105,7 +104,7 @@ class IndexController extends Controller
             "additional" => $additional
         );
 
-        $this->mongo->updateOne(["_id" => new MongoDB\BSON\ObjectID($id)], ['$set' => $data]);
+        $this->mongo->products->updateOne(["_id" => new MongoDB\BSON\ObjectID($id)], ['$set' => $data]);
         $this->response->redirect('/index/product');
     }
 }
