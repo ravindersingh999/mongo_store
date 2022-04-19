@@ -15,7 +15,7 @@ class OrderController extends Controller
                 'customer_name' => $this->request->getPost('customer_name'),
                 'product_quantity' => $this->request->getPost('product_quantity'),
                 'order_status' => 'paid',
-                'order_date' => date('d/m/y')
+                'order_date' => date('Y-m-d')
             );
 
             $this->mongo->orders->insertOne($data);
@@ -53,14 +53,36 @@ class OrderController extends Controller
 
             if ($date == 'today') {
                 $filter_date = array(
-                    "order_date" => date('d/m/y')
+                    "order_date" => date('Y-m-d')
                 );
                 $filter_by_date = $this->mongo->orders->find($filter_date);
                 $this->view->order = $filter_by_date;
             }
             if ($date == "this_week") {
-                $start_date = date("d/m/y", strtotime("-1 week"));
-                $end_date = date("d/m/y");
+                $start_date = date("Y-m-d", strtotime("-1 week"));
+                $end_date = date("Y-m-d");
+                $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
+                $orders = $this->mongo->orders->find($orders);
+                $this->view->order = $orders;
+            }
+            if ($date == 'this_month') {
+                $start_date = date('Y-m-d', strtotime('first day of this month'));
+                $end_date = date('Y-m-d');
+                $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
+                $orders = $this->mongo->orders->find($orders);
+                $this->view->order = $orders;
+            }
+
+            if ($date == "custom") {
+                $html = '<div>
+                <input type="text" name="start_date" placeholder="Start Date"><br>
+                <input type="text" name="end_date" placeholder="End Date">
+            </div>';
+                $this->view->html = $html;
+            }
+            if ($this->request->getPost('custom')) {
+                $start_date = $this->request->getPost('start_date');
+                $end_date = $this->request->getPost('end_date');
                 $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
                 $orders = $this->mongo->orders->find($orders);
                 $this->view->order = $orders;
